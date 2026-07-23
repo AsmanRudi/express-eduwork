@@ -1,60 +1,14 @@
 const router = require('express').Router();
 const multer = require('multer');
-const upload = multer({dest: 'uploads'});
-const fs = require('fs');
-const path = require('path');
-const connection = require('../../config/mysql');
+const upload = multer({ dest: 'uploads' });
 
-router.get('/product', (req, res) => {
-    connection.connect();
-    connection.query({
-        sql: 'SELECT * FROM products',
-    }, (error, result) => {
-        if(error) {
-            res.send({
-                status: 'failed',
-                response: 'failed to fetch data'
-            });
-        } else {
-            res.send({
-                status: 'success',
-                response: result
-            });
-        }
-    });
-});
+const productController = require('./controller');
 
-router.get('/product/:id', (req, res) => {
-    res.json({
-        id: req.params.id,
-    });
-});
+router.get('/product', productController.index);
+router.get('/product/:id', productController.show);
+router.post('/product', upload.single('image'), productController.store);
+router.put('/product/:id', upload.single('image'), productController.update);
+router.delete('/product/:id', productController.destroy);
 
-router.post('/product/', upload.single('image'), (req, res) => {
-    const {name, price, stock, status} = req.body;
-    const image = req.file;
+module.exports = router;
 
-    if(image) {
-        const target = path.join(__dirname, 'uploads', image.originalname);
-        fs.renameSync(image.path, target);
-
-    // res.json({
-    //     name,
-    //     price,
-    //     stock,
-    //     status,
-    //     image
-    // });
-
-    res.sendFile(target);
-}
-});
-
-
-// router.get('/:category/:tag', (req, res) => {
-//     const {category, tag} = req.params;
-//     res.json({category, tag});
-// });
-
-
-module.exports = router; 
