@@ -22,17 +22,16 @@ app.use('/api/v2', productRouterV2);
 
 
 
+// Catch-all route untuk mengembalikan index.html (SPA Fallback) - tidak untuk API
 app.use((req, res, next) => {
-    res.status(404);
-    res.send({
-        status: 'failed',
-        message: ' Resource' + req.originalUrl + ' not found'
-    })
+    if (req.originalUrl.startsWith('/api/')) {
+        res.status(404).json({
+            status: 'failed',
+            message: 'Resource ' + req.originalUrl + ' not found'
+        });
+    } else {
+        res.sendFile(path.join(__dirname, "public", "index.html"));
+    }
 });
-
-app.use((req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
 
 module.exports = app;

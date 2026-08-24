@@ -1,21 +1,28 @@
 const { MongoClient } = require('mongodb');
 
-const uri = process.env.MONGODB_URI;
-
-const client = new MongoClient(uri);
-
+let client;
 let db;
 
 async function connectMongoDB () {
+    if (db) return;
+
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+        throw new Error('MONGODB_URI is not defined in environment variables');
+    }
+
     try {
-        await client.connect();
+        if (!client) {
+            client = new MongoClient(uri);
+            await client.connect();
+        }
         
         db = client.db('eduwork-native');
 
-        console.log('Server Terhubung ke MongoDB');
+        console.log('Server Terhubung ke MongoDB Native');
     }
     catch (error) {
-        console.error('MongoDB Gagal Terhubung:', error);
+        console.error('MongoDB Native Gagal Terhubung:', error);
         throw error;
     }
 }
