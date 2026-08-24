@@ -1,40 +1,45 @@
-const sequelize = require('../../config/sequalize');
-const { Sequelize, DataTypes } = require('sequelize');
+const mongoose = require("mongoose");
 
-const Product = sequelize.define('Product',
-  {
-    // Model attributes are defined here
-    users_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
+const productSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: [true, "field nama harus ada"],
+            minlength: 3,
+            maxlength: 100,
+            trim: true,
+        },
 
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    price: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-     
-    },
- 
-    stock: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-     
-    },
+        price: {
+            type: Number,
+            required: [true, "field harga harus ada"],
+            min: [1000, "harga minimal 1000"],
+            max: [100000000, "harga maksimal 100000000"],
+        },
 
-    status: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      allowNull: false
-     
+        stock: {
+            type: Number,
+            required: [true, "field stock harus ada"],
+            min: [0, "stock tidak boleh negatif"],
+        },
+
+        status: {
+            type: Boolean,
+            default: true,
+        },
+
+        image_url: {
+            type: String,
+            trim: true,
+        },
     },
-    image_url: {
-        type: DataTypes.TEXT,
-  }
+    {
+        timestamps: true,
+    }
+);
 
+const Product =
+    mongoose.models.Product ||
+    mongoose.model("Product", productSchema, "products");
 
-  });
-  module.exports = Product;
+module.exports = Product;
