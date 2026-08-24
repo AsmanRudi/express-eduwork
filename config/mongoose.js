@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 
-async function connectMongoose () {
+async function connectMongoose() {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
-        console.log("Mongoose berhasil terhubung...");
+
+        console.log('Mongoose berhasil terhubung...');
     } catch (error) {
-        console.error("Mongoose gagal terhubung: ", error);
-        process.exit(1);
+        console.error('Mongoose gagal terhubung:', error);
+        throw error;
     }
 }
 

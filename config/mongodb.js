@@ -16,7 +16,7 @@ async function connectMongoDB () {
     }
     catch (error) {
         console.error('MongoDB Gagal Terhubung:', error);
-        process.exit(1);
+        throw error;
     }
 }
 
