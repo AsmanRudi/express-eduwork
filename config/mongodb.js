@@ -4,12 +4,20 @@ let client;
 let db;
 
 async function connectMongoDB () {
-    if (db) return;
-
     const uri = process.env.MONGODB_URI;
     if (!uri) {
         throw new Error('MONGODB_URI is not defined in environment variables');
     }
+
+    if (client) {
+        if (!client.topology || (client.topology.isDestroyed && client.topology.isDestroyed())) {
+            console.warn('MongoDB topology closed or missing. Reconnecting...');
+            client = null;
+            db = null;
+        }
+    }
+
+    if (db) return;
 
     try {
         if (!client) {
